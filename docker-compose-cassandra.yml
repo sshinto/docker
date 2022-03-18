@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  cassandra:
+    build:
+      context: ./
+      dockerfile: docker/cassandra/Dockerfile
+    ports:
+      - "9042:9042"
+    container_name: cassandra
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+      - cassandra-data:$home/cassandra
+      - ./docker/cassandra/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+volumes:
+  cassandra-data: {}
+
+networks:
+  default:
+    driver: bridge
