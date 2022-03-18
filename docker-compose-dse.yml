@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  dse-server:
+    image: datastax/dse-server:6.8.2
+    container_name: dse-server
+    environment:
+      DS_LICENSE: accept
+    ports:
+      - "9042:9042"
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+        reservations:
+          memory: 1g
+    volumes:
+      - ./data:/var/lib/cassandra/data
+      - ./conf:/config
+      - ./logs:/var/lib/cassandra/commit_logs
+      - ./cache:/var/lib/cassandra/saved_caches
+      - ./confy:/etc/dse/conf
+
+  dse-studio:
+    image: datastax/dse-studio:latest
+    container_name: dse-studio
+    environment:
+      DS_LICENSE: accept
+    ports:
+      - "9091:9091"
+    links:
+      - dse-server
+    depends_on:
+      - dse-server
+
+volumes:
+  db-data:
+
+networks:
+  front-tier:
+  back-tier:
