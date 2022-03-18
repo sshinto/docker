@@ -1,0 +1,9 @@
+#Base Image
+FROM openjdk:8
+VOLUME /tmp
+RUN mkdir -p usr/app/ssl/certs/
+RUN chmod -R 0777 usr/app/ssl/certs/
+COPY ../../secrets /usr/app/ssl/certs
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+CMD java -Dserver.ssl.enabled=false -Dspring.profiles.active=local -Dcom.datastax.driver.FORCE_NIO=true -Djavax.net.ssl.trustStore=/usr/app/ssl/certs/truststore.jks -Djavax.net.ssl.keyStore=/usr/app/ssl/certs/keystore.jks -Djwt.key.file=/usr/app/ssl/certs/jwt4-validation-truststore.jks -Dserver.ssl.trust-store=/usr/app/ssl/certs/truststore.jks -Dserver.ssl.key-store=/usr/app/ssl/certs/keystore.jks -Dserver.ssl.key-store-type=JKS -Dserver.ssl.ciphers=TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA  -Dserver.ssl.enabled-protocols=TLSv1,TLSv1.2 -Dserver.ssl.trust-store-type=JKS -jar app.jar
